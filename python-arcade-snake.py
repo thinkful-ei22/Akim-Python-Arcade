@@ -21,6 +21,7 @@ class _Node:
         self.xPos = x
         self.yPos = y
         self.next = next
+        self.prevPos = {'xPos': x, 'yPos': y}
 
 # implementing a linkedList variant for the snake.
 
@@ -32,55 +33,23 @@ class SnakeList:
     def insertFirst(self, xVal, yVal):
         self.head = _Node(xVal, yVal, self.head)
 
-    def insertLast(self, xVal, yVal, next=None):
+    def moveSnakeNodes(self):
+        currentNode = self.head
+        while currentNode.Next != None:
+            currentNode.next.xPos = currentNode.prevPos['xPos']
+            currentNode.next.yPos = currentNode.prevPos['yPos']
+            currentNode = currentNode.Next
+
+    def insertLast(self):
         if(self.head != None):
             tempNode = self.head
             while (tempNode.next != None):
                 tempNode = tempNode.next
 
-            tempNode.next = _Node(xVal, yVal, None)
+            tempNode.next = _Node(tempNode.xPos, tempNode.yPos, None)
             return
         else:
             self.insertFirst(xVal, yVal)
-
-# and a class for the snake food
-# class _SnakeFood:
-#   def __init__ (self, x, y, nextNode = None):
-#     self.xPos = x
-#     self.yPos = y
-#     self.height = 20
-#     self.width = 20
-#     self.next = None
-#     self.prev = None
-
-# we'll use a queue to facilitate the appearance and disappearance of snake food
-# class FoodQueue:
-#   def __init__ (self):
-#     self.first = None
-#     self.last = None
-
-#   def enqueue(self, x, y):
-#     NewFood = _SnakeFood(x, y, None)
-#     if(self.first == None):
-#       self.first = NewFood
-#     if(self.last != None):
-#       self.last.next = NewFood
-#       NewFood.prev = self.last
-#     self.last = NewFood
-
-#   def dequeue(self):
-#     if self.first == None:
-#       return
-
-#     currentNode = self.first
-#     self.first = currentNode.next
-
-#     if(currentNode == self.last):
-#       self.last = null
-
-#     return
-
-# this function will redraw the game window with the new snake parts
 
 
 def redrawGameWindow(player, food):
@@ -124,8 +93,14 @@ def addFood(obj):
     generateFood(obj, randomX, randomY)
 
 
-def dropFood(obj):
-    obj.dequeue()
+def deleteFood(player, food):
+    foodLooper = 1
+    while foodLooper <= 5:
+        if food[foodLooper] != None:
+            if player.head.xPos == food[foodLooper]['xPos'] and player.head.yPos == food[foodLooper]['yPos']:
+                food[foodLooper] = None
+        foodLooper += 1
+    player.insertLast()
 
 
 # =========================MAIN LOOP=============================================
@@ -145,7 +120,7 @@ velocity = 30
 pygame.time.set_timer(MAKEFOOD, 5000)
 while run:
 
-    # in case player quits
+            # in case player quits
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
@@ -184,6 +159,8 @@ while run:
         Snake.head.yPos -= velocity
     if(down == True):
         Snake.head.yPos += velocity
+
+    deleteFood(Snake, currentFood)
 
     redrawGameWindow(Snake, currentFood)
 
