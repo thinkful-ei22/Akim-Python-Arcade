@@ -2,8 +2,10 @@
 import pygame
 pygame.init()
 
+screenWidth = 800
+screenHeight = 800
 #sets the dimensions of the pygame window
-win = pygame.display.set_mode((800, 800))
+win = pygame.display.set_mode((screenWidth, screenHeight))
 
 #sets the caption for the game
 pygame.display.set_caption("Python Arcade")
@@ -16,11 +18,11 @@ x = 50
 y =  750
 
 ##Height and Width are the dimensions of the character
-height = 50
-width = 40
+characterHeight = 50
+characterWidth = 40
 
 ##represents the character's velocity
-velocity = 5
+velocity = 10
 #==============================================================================
 
 #==================MAIN LOOP===================================================
@@ -41,17 +43,18 @@ while run:
 
   ##then we check for the key-presses using the pygame key ascii and bind--
   ##--actions to them
+
   ### pygame key ASCII : https://www.pygame.org/docs/ref/key.html
-  if keys[pygame.K_LEFT]: 
+  if keys[pygame.K_LEFT] and x > velocity: 
     x-=velocity
 
-  if keys[pygame.K_RIGHT]: 
+  if keys[pygame.K_RIGHT] and x < (screenWidth - velocity - characterWidth): 
     x+=velocity
 
-  if keys[pygame.K_UP]:
+  if keys[pygame.K_UP] and y > velocity:
     y-=velocity
 
-  if keys[pygame.K_DOWN]: 
+  if keys[pygame.K_DOWN] and y < (screenHeight - velocity - characterHeight): 
     y+=velocity
 
   #we fill the rest of the window before updating to clear old shapes
@@ -66,7 +69,7 @@ while run:
 
   ##the third argument is the position of the shape, passed in as--
   ##-- (x position, y position, width, height)
-  pygame.draw.rect(win, (255, 0, 255), (x, y, width, height))
+  pygame.draw.rect(win, (255, 0, 255), (x, y, characterWidth, characterHeight))
 
   #this line refreshes the pygame gui, updating it.
   pygame.display.update()
