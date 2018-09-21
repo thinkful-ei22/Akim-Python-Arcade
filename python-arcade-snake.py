@@ -60,9 +60,14 @@ def redrawGameWindow(player, food):
     currentNode = player.head
     counter = 1
     while (currentNode != None):
-        pygame.draw.rect(win, (255, 0, 255), (currentNode.xPos,
-                                              currentNode.yPos, currentNode.width, currentNode.height))
-        currentNode = currentNode.next
+        if currentNode == player.head:
+            pygame.draw.rect(win, (255, 0, 0), (currentNode.xPos,
+                                                currentNode.yPos, currentNode.width, currentNode.height))
+            currentNode = currentNode.next
+        else:
+            pygame.draw.rect(win, (255, 0, 255), (currentNode.xPos,
+                                                  currentNode.yPos, currentNode.width, currentNode.height))
+            currentNode = currentNode.next
 
     while counter <= 5:
         if food[counter] != None:
@@ -110,6 +115,23 @@ def deleteFood(player, food):
         foodLooper += 1
 
 
+def playerLose(obj):
+    playerX = obj.head.xPos
+    playerY = obj.head.yPos
+    currentNode = obj.head.next
+    if not 4 < playerX < 876:
+        return True
+    elif not 4 < playerY < 876:
+        return True
+    else:
+        while currentNode != None:
+            if currentNode != obj.head.next:
+                if obj.head.xPos == currentNode.xPos and obj.head.yPos == currentNode.yPos:
+                    return True
+            currentNode = currentNode.next
+    return False
+
+
 # =========================MAIN LOOP=============================================
 # make a custom event using pygame's USEREVENT
 MAKEFOOD = pygame.USEREVENT+1
@@ -123,7 +145,7 @@ right = False
 up = False
 down = False
 velocity = 30
-pygame.time.set_timer(MAKEFOOD, 5000)
+pygame.time.set_timer(MAKEFOOD, 2500)
 while run:
 
             # in case player quits
@@ -167,6 +189,16 @@ while run:
         Snake.head.yPos += velocity
 
     deleteFood(Snake, currentFood)
+
+    lose = playerLose(Snake)
+    if lose != False:
+        left = False
+        right = False
+        up = False
+        down = False
+        Snake = SnakeList()
+        Snake.insertFirst(5, 5)
+        currentFood = {1: None, 2: None, 3: None, 4: None, 5: None}
 
     redrawGameWindow(Snake, currentFood)
 
