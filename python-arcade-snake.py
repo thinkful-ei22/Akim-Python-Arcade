@@ -78,12 +78,17 @@ class FoodQueue:
     return 
 
 #this function will redraw the game window with the new snake parts
-def redrawGameWindow(obj):
+def redrawGameWindow(player, food):
   win.fill((0,0,0))
-  currentNode = obj.head
+  currentNode = player.head
+  currentNode2 = food.first
   while (currentNode != None):
     pygame.draw.rect(win, (255, 0, 255), (currentNode.xPos, currentNode.yPos, currentNode.width, currentNode.height))
     currentNode= currentNode.next
+
+  while (currentNode2!= None):
+    pygame.draw.rect(win, (0, 255, 0), (currentNode2.xPos, currentNode2.yPos, 20, 20))
+    currentNode2 = currentNode2.next
 
   pygame.display.update()
 
@@ -91,14 +96,22 @@ def getRandomNumber():
   for x in range(1):
     return random.randint(4, 891)
 
-def generateFood():
+def addFood(obj):
   randomX= getRandomNumber()
   randomY= getRandomNumber()
-  pygame.draw.rect(win, (0, 255, 0), randomX, randomY, 20, 20)
+  obj.enqueue(randomX, randomY)
+
+def dropFood(obj):
+  obj.dequeue()
+
 
 
 #=========================MAIN LOOP=============================================
+#make a custom event using pygame's USEREVENT
+MAKEFOOD = pygame.USEREVENT+1
+
 Snake = SnakeList()
+CurrentFood = FoodQueue()
 #pygame.time.delay(50)
 Snake.insertFirst(5, 5)
 run = True
@@ -107,7 +120,7 @@ right = False
 up = False
 down = False
 velocity = 15
-#pygame.time.set_timer(generateFood, 500)
+pygame.time.set_timer(MAKEFOOD, 5000)
 while run:
   
 
@@ -139,16 +152,19 @@ while run:
         up = False
         down = True
     
-    if(left == True):
-      Snake.head.xPos -= velocity
-    if(right == True):
-      Snake.head.xPos += velocity
-    if(up == True):
-      Snake.head.yPos -= velocity
-    if(down == True):
-      Snake.head.yPos += velocity
+    if event.type == MAKEFOOD:
+      addFood(CurrentFood)
 
-  redrawGameWindow(Snake)
+  if(left == True):
+    Snake.head.xPos -= velocity
+  if(right == True):
+    Snake.head.xPos += velocity
+  if(up == True):
+    Snake.head.yPos -= velocity
+  if(down == True):
+    Snake.head.yPos += velocity
+
+  redrawGameWindow(Snake, CurrentFood)
   
   clock.tick(5)
 pygame.quit()
