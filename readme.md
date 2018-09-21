@@ -3,7 +3,7 @@ Python Arcade is meant to be a free retro arcade meant for fans of old games.
 
 Tech Stack:
 
-Python
+Python,
 Pygame
 
 Future Stack:

@@ -35,10 +35,13 @@ class SnakeList:
 
     def moveSnakeNodes(self):
         currentNode = self.head
-        while currentNode.Next != None:
-            currentNode.next.xPos = currentNode.prevPos['xPos']
-            currentNode.next.yPos = currentNode.prevPos['yPos']
-            currentNode = currentNode.Next
+        while currentNode != None:
+            if currentNode.next != None:
+                currentNode.next.xPos = currentNode.prevPos['xPos']
+                currentNode.next.yPos = currentNode.prevPos['yPos']
+            currentNode.prevPos['xPos'] = currentNode.xPos
+            currentNode.prevPos['yPos'] = currentNode.yPos
+            currentNode = currentNode.next
 
     def insertLast(self):
         if(self.head != None):
@@ -66,6 +69,8 @@ def redrawGameWindow(player, food):
             pygame.draw.rect(
                 win, (0, 255, 0), (food[counter]['xPos'], food[counter]['yPos'], 20, 20))
         counter += 1
+
+    player.moveSnakeNodes()
 
     pygame.display.update()
 
@@ -99,8 +104,10 @@ def deleteFood(player, food):
         if food[foodLooper] != None:
             if player.head.xPos == food[foodLooper]['xPos'] and player.head.yPos == food[foodLooper]['yPos']:
                 food[foodLooper] = None
+                player.insertLast()
+                print(food)
+                return
         foodLooper += 1
-    player.insertLast()
 
 
 # =========================MAIN LOOP=============================================
@@ -109,7 +116,6 @@ MAKEFOOD = pygame.USEREVENT+1
 
 Snake = SnakeList()
 currentFood = {1: None, 2: None, 3: None, 4: None, 5: None}
-# pygame.time.delay(50)
 Snake.insertFirst(5, 5)
 run = True
 left = False
