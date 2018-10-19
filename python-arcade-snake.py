@@ -95,6 +95,7 @@ def generateFood(obj, xVal, yVal):
             return obj
         counter += 1
     print('current food is full')
+    print(obj)
 
 
 def addFood(obj):
